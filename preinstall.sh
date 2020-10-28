@@ -1,4 +1,13 @@
 #!/bin/bash
+echo "<INFO> Checking if docker is installed"
+rep=$(curl -s --unix-socket /var/run/docker.sock http://ping > /dev/null)
+status=$?
+if [ "$status" == "7" ]; then
+    echo '<ERROR> Docker is not available.'
+    echo '<ERROR> This plugin needs the docker plugin https://www.loxwiki.eu/display/LOXBERRY/Docker.'
+    exit 2
+fi
+
 
 echo "<INFO> Copying plugin configuration into installation"
 cp ./plugin.cfg ./config/plugin.cfg
