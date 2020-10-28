@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class DemoController.
  */
-class DemoController extends AbstractController
+class HomeController extends AbstractController
 {
     /**
      * @return Response
      */
-    public function demoPage()
+    public function indexPage()
     {
         return $this->render('pages/home.html.twig');
     }

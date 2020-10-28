@@ -1,11 +1,11 @@
 home:
   route: '/'
-  controller: 'LoxBerryPoppinsPlugin\Controller\DemoController'
-  action: 'demoPage'
+  controller: 'LoxBerryPoppinsPlugin\Controller\HomeController'
+  action: 'indexPage'
 
 logs:
   route: '/logs'
-  controller: 'LoxBerryPoppinsPlugin\Controller\DemoController'
+  controller: 'LoxBerryPoppinsPlugin\Controller\HomeController'
   action: 'logsPage'
 
 #  Full configuration could look like this:

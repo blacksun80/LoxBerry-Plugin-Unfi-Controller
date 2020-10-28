@@ -2,7 +2,7 @@
 # The navbar won't be displayed if not items are found
 
 home:
-  title: navbar.welcome
+  title: navbar.home
   route: home
 logs:
   title: navbar.logs
