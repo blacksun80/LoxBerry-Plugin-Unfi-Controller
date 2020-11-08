@@ -46,6 +46,13 @@ PSBIN=$LBPSBIN/$PDIR
 PBIN=$LBPBIN/$PDIR
 
 
+echo "<INFO> Updating service config"
+ln -f -s $PDATA/src/Docker/unifi.service /etc/systemd/system/unifi.service
+
+systemctl daemon-reload
+systemctl enable unifi
+systemctl start unifi
+
 
 # Exit with Status 0
 exit 0

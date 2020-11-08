@@ -1,0 +1,18 @@
+# /etc/systemd/system 
+# unifi docker compose service
+
+[Unit]
+Description=Docker Compose Unifi-Controller Service
+Requires=docker.service
+After=docker.service network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=REPLACELBPDATADIR/src/Docker
+ExecStart=/usr/bin/docker-compose up -d
+ExecStop=/usr/bin/docker-compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
