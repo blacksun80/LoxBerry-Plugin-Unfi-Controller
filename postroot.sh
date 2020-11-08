@@ -45,6 +45,13 @@ PCONFIG=$LBPCONFIG/$PDIR
 PSBIN=$LBPSBIN/$PDIR
 PBIN=$LBPBIN/$PDIR
 
+if [ -d "/tmp/$PTEMPDIR\_upgrade" ]; then
+    echo "<INFO> Copy back existing files"
+    cp -f -r /tmp/$PTEMPDIR\_upgrade/data/* $LBHOMEDIR/data/plugins/$PDIR/
+
+    echo "<INFO> Remove temporary folders"
+    rm -f -r /tmp/$PTEMPDIR\_upgrade
+fi
 
 echo "<INFO> Updating service config"
 ln -f -s $PDATA/src/Docker/unifi.service /etc/systemd/system/unifi.service
@@ -52,7 +59,6 @@ ln -f -s $PDATA/src/Docker/unifi.service /etc/systemd/system/unifi.service
 systemctl daemon-reload
 systemctl enable unifi
 systemctl start unifi
-
 
 # Exit with Status 0
 exit 0
