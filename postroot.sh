@@ -45,7 +45,7 @@ PCONFIG=$LBPCONFIG/$PDIR
 PSBIN=$LBPSBIN/$PDIR
 PBIN=$LBPBIN/$PDIR
 
-if [ -d "/tmp/$PTEMPDIR\_upgrade" ]; then
+if [ -d /tmp/$PTEMPDIR\_upgrade ]; then
     echo "<INFO> Copy back existing files"
     cp -f -r /tmp/$PTEMPDIR\_upgrade/data/* $LBHOMEDIR/data/plugins/$PDIR/
 

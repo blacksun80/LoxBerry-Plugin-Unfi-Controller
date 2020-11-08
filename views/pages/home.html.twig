@@ -1,5 +1,8 @@
 {% extends 'pages/templates/adminBasePage.html.twig' %}
 
 {% block body %}
-    <iframe src="unifi" scrolling="yes" seamless="seamless" style="width:100%; height:85vh;" frameborder="0"></iframe>
+<div class="wide">UniFi Controller</div>
+<p><i>{{ trans('home.home_explanation') }}</i></p>
+
+<a href="{{unifi_url}}" target="_blank" class="ui-btn" id="openui" data-inline="true">{{ trans('home.open_ui')}}</a>
 {% endblock %}

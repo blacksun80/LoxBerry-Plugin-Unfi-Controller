@@ -15,7 +15,8 @@ class HomeController extends AbstractController
      */
     public function indexPage()
     {
-        return $this->render('pages/home.html.twig');
+        $unifi_url = "https://" . $this->getRequest()->getHost() . ":8443/";
+        return $this->render('pages/home.html.twig', array("unifi_url" => $unifi_url));
     }
 
     /**
@@ -24,13 +25,5 @@ class HomeController extends AbstractController
     public function logsPage()
     {
         return $this->render('pages/logs.html.twig');
-    }
-
-    /**
-     * @return Response
-     */
-    public function unifiPage()
-    {
-        return $this->render('pages/unifi.html.twig');
     }
 }
