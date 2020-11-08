@@ -1,13 +1,17 @@
 home:
-  route: '/'
+  route: "/"
   controller: 'LoxBerryPoppinsPlugin\Controller\HomeController'
-  action: 'indexPage'
+  action: "indexPage"
 
 logs:
-  route: '/logs'
+  route: "/logs"
   controller: 'LoxBerryPoppinsPlugin\Controller\HomeController'
-  action: 'logsPage'
+  action: "logsPage"
 
+unifi:
+  route: "/unifi"
+  controller: 'LoxBerryPoppinsPlugin\Controller\HomeController'
+  action: "unifiPage"
 #  Full configuration could look like this:
 #  someRoute:
 #    route: '/'

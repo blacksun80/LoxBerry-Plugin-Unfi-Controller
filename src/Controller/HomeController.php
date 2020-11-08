@@ -25,4 +25,12 @@ class HomeController extends AbstractController
     {
         return $this->render('pages/logs.html.twig');
     }
+
+    /**
+     * @return Response
+     */
+    public function unifiPage()
+    {
+        return $this->render('pages/unifi.html.twig');
+    }
 }
