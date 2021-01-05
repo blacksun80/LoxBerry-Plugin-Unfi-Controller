@@ -24,7 +24,7 @@ class HomeController extends AbstractController
      */
     public function logsPage()
     {
-        $serverlog=urlencode('REPLACELBPDATADIR/logs/server.log');
+        $serverlog=urlencode('REPLACELBPLOGDIR/server.log');
         return $this->render('pages/logs.html.twig',array("serverlog"=>$serverlog));
     }
 }

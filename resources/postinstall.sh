@@ -30,5 +30,8 @@ echo "<INFO> Creating environment"
 echo "PUID=`id -u`" > $PCONFIG/unifi.env
 echo "PGID=`id -g`" >> $PCONFIG/unifi.env
 
+echo "<INFO> Linking logs"
+ln -s -f $PDATA/data/logs/server.log $PLOG/server.log
+
 # Exit with Status 0
 exit 0
