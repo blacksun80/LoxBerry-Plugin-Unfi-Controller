@@ -2,6 +2,18 @@
 
 {% block body %}
 <h2>{{ trans('logs.headline') }}</h2>
-<p>{{ trans('logs.cron_explanation') }}</p>
-{{ logList('Cron') }}
+<div data-role='collapsible' id='coll_package_zigbee' data-content-theme='true' data-collapsed='false'
+    data-collapsed-icon='carat-d' data-expanded-icon='carat-u' data-iconpos='right'>
+    <h2 class='ui-bar ui-bar-a ui-corner-all' id='package_mqttgateway_zigbee'>Zigbee2MQTT Log</h2>
+    <table style='width:100%; padding:8px; border:1px solid #ddd; border-collapse: collapse;'>
+        <tr>
+            <td>server.log</td>
+            <td></td>
+            <td><a data-role='button'
+                    href='/admin/system/tools/logfile.cgi?logfile={{serverlog}}&header=html&format=template&only=once'
+                    target='_blank' data-inline='true' data-mini='true' data-icon='action'>Logfile</a></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
 {% endblock %}
