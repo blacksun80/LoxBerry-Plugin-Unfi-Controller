@@ -2,7 +2,21 @@
 
 {% block body %}
 <div class="wide">UniFi Controller</div>
-<p><i>{{ trans('home.home_explanation') }}</i></p>
 
+<table class="formtable" style="border:0; width:100%;">
+			<tbody><tr>
+				<td>
+					Unfi Controller Version:
+				</td>
+				<td>
+					{{unifi_data.version}}
+				</td>
+				
+			</tr>
+			
+		</tbody></table>
+
+<p><i>{{ trans('home.home_explanation') }}</i></p>
 <a href="{{unifi_url}}" target="_blank" class="ui-btn" id="openui" data-inline="true">{{ trans('home.open_ui')}}</a>
+
 {% endblock %}

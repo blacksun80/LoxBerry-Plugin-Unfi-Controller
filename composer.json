@@ -6,7 +6,8 @@
         "php": ">=7.2",
         "moay/loxberry-core": "^1.0",
         "moay/loxberry-poppins": "^1.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "symfony/http-client": "5.x-dev"
     },
     "require-dev": {
         "moay/loxberry-plugin-pushinstall": "^1"
@@ -21,7 +22,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "LoxBerryPoppinsPlugin\\": "src/",
+            "LoxBerryUnifiPlugin\\": "src/",
             "Tests\\": "tests/"
         }
     }

@@ -20,7 +20,7 @@ services:
     Twig\Extension\AbstractExtension:
       tags: ['twig.extension']
 
-  LoxBerryPoppinsPlugin\:
+  LoxBerryUnifiPlugin\:
     resource: '../src/*'
   LoxBerryPoppins\:
     resource: '../vendor/moay/loxberry-poppins/src/*'
