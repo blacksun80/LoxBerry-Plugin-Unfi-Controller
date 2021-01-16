@@ -30,9 +30,7 @@ echo "<INFO> Creating environment"
 echo "PUID=`id -u`" > $PCONFIG/unifi.env
 echo "PGID=`id -g`" >> $PCONFIG/unifi.env
 
-if [ ! -f $PCONFIG/.env ]; then 
-    echo "VERSION=version-6.0.43" > $PCONFIG/.env
-fi
+
 
 echo "<INFO> Linking logs"
 ln -s -f $PDATA/data/logs/server.log $PLOG/server.log

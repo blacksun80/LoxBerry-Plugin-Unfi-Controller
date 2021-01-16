@@ -48,17 +48,19 @@ PBIN=$LBPBIN/$PDIR
 if [ -d /tmp/$PTEMPDIR\_upgrade ]; then
     echo "<INFO> Copy back existing files"
     cp -f -r /tmp/$PTEMPDIR\_upgrade/data/* $LBHOMEDIR/data/plugins/$PDIR/
-    cp -f -r /tmp/$PTEMPDIR\_upgrade/config/$PDIR/* $LBHOMEDIR/config/plugins/$PDIR/
-
+    cp -a /tmp/$PTEMPDIR\_upgrade/config/$PDIR/* $LBHOMEDIR/config/plugins/$PDIR/
 
     echo "<INFO> Remove temporary folders"
     rm -f -r /tmp/$PTEMPDIR\_upgrade
+fi
 
-
+if [ ! -f $PCONFIG/env ]; then 
+    echo "<INFO> Setting controller version"
+    echo "VERSION=version-6.0.43" > $PCONFIG/env
 fi
 
 echo "<INFO> Updating service config"
-ln -f -s $PCONFIG/.env $PDATA/src/Docker/.env
+ln -f -s $PCONFIG/env $PDATA/src/Docker/.env
 ln -f -s $PDATA/src/Docker/unifi.service /etc/systemd/system/unifi.service
 
 systemctl daemon-reload

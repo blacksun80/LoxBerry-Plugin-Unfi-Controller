@@ -62,7 +62,7 @@ sudo systemctl stop unifi
 
 echo "<INFO> Creating temporary folders for upgrading"
 mkdir -p /tmp/$PTEMPDIR\_upgrade/data
-mkdir /tmp/$PTEMPDIR\_upgrade/config
+mkdir -p /tmp/$PTEMPDIR\_upgrade/config
 
 if [ -d $PDATA/data ]; then
   echo "<INFO> Backing up existing files"
