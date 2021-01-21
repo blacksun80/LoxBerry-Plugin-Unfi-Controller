@@ -8,8 +8,12 @@ namespace LoxBerryUnifiPlugin\Model;
 class UnifiControllerStatus
 {
     public $version;
+    public $containerVersion;
+    public $status;
 
-    function __construct($version) {
+    function __construct($version,$containerVersion,$status) {
         $this->version = $version;
+        $this->containerVersion=$containerVersion;
+        $this->status=$status;
     }
 }

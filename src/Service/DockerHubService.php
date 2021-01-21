@@ -1,5 +1,5 @@
 <?PHP
-namespace LoxBerryUnifiPlugin\Services;
+namespace LoxBerryUnifiPlugin\Service;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpClient\HttpClient;
