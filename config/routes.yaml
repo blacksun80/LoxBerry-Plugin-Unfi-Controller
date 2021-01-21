@@ -8,6 +8,12 @@ logs:
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
   action: "logsPage"
 
+upgrade:
+  route: "/upgrade"
+  controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
+  method: 'POST'
+  action: "upgrade"
+
 unifi:
   route: "/unifi"
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'

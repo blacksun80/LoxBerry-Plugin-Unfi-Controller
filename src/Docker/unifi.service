@@ -10,7 +10,7 @@ After=docker.service network.target
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=REPLACELBPDATADIR/src/Docker
-ExecStart=/usr/bin/docker-compose up -d
+ExecStart=/usr/bin/docker-compose up -d --remove-orphans
 ExecStop=/usr/bin/docker-compose down
 TimeoutStartSec=0
 

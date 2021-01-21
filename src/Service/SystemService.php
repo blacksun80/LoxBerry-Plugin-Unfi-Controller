@@ -28,12 +28,12 @@ class SystemService
      */
     public function getServiceStatus($serviceName)
     {
-        return shell_exec("systemctl show --value $serviceName --property SubState");
+        return shell_exec("systemctl show --value $serviceName --property ActiveState");
     }
 
     public function restartService($serviceName)
     {
-        return shell_exec("systemctl restart $serviceName");
+        return shell_exec("sudo systemctl restart $serviceName &");
     }
 
     public function getContainerVersionFromEnv()
@@ -41,6 +41,12 @@ class SystemService
         $filename = $this->getConfigFolder() . "/env";
         $contents =  file_get_contents($filename);
         return trim(explode('=', $contents)[1]);
+    }
+
+    public function setContainerVersion($version)
+    {
+        $filename = $this->getConfigFolder() . "/env";
+        file_put_contents($filename, "VERSION=$version");
     }
 
     /**

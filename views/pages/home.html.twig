@@ -62,7 +62,7 @@
 		<i>In this section you can change the version of the unifi controller container</i>
 
 	</p>
-	<form id="ServiceConfig">
+	<form id="config" method="post" action="{{ adminRouteUrl('upgrade') }}">
 
 		<div class="lb_flex-container">
 			<div class="lb_flex-item-label">
@@ -71,7 +71,7 @@
 			<div class="lb_flex-item-spacer"></div>
 			<div class="lb_flex-item">
 				<div class="ui-select ui-mini">
-					<select id="changeVersion" name="CONFIG.version" data-mini="true" selected="selcted">
+					<select id="version" name="version" data-mini="true" selected="selcted">
 						{% for version in versions %}
 							<option value="{{version}}">{{version}}</option>
 						{% endfor %}
