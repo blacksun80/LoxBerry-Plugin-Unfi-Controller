@@ -57,6 +57,7 @@ fi
 if [ ! -f $PCONFIG/env ]; then 
     echo "<INFO> Setting controller version"
     echo "VERSION=version-6.0.43" > $PCONFIG/env
+    chown loxberry:loxberry $PCONFIG/env
 fi
 
 echo "<INFO> Updating service config"
