@@ -92,7 +92,7 @@ class HomeController extends AbstractController
     {
         try {
             $client = HttpClient::create(['verify_peer' => false, 'verify_host' => false]);
-            $response = $client->request('GET', "$unifiUrl/status");
+            $response = $client->request('GET', "$unifiUrl/status",['timeout' => 3]);
             $content = $response->toArray();
             return $content['meta']['server_version'];
         } catch (Exception $e) {
