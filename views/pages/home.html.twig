@@ -50,7 +50,7 @@
 		<div class="lb_flex-item-spacer"></div>
 		<div class="lb_flex-item-help hint">
 			{{ trans('home.controller_version_help') }}
-			
+
 		</div>
 		<div class="lb_flex-item-spacer"></div>
 	</div>
@@ -71,7 +71,7 @@
 				<div class="ui-select ui-mini">
 					<select id="version" name="version" data-mini="true">
 						{% for version in versions %}
-							<option value="{{version}}" {% if version == unifi_data.containerVersion %}selected{% endif %} >{{version}}</option>
+							<option value="{{version}}" {% if version == unifi_data.containerVersion %} selected {% endif %}>{{version}}</option>
 						{% endfor %}
 					</select>
 
@@ -86,6 +86,13 @@
 			</div>
 		</div>
 	</form>
+
+	<div class="wide">{{ trans('home.configuration') }}</div>
+	<p>
+		<i>{{ trans('home.configuration_info') }}</i>
+	</p>
+	<p>{{ trans('home.configuration_howto') }}</p>
+	<img src="{{ assetUrl('img/config_howto.png') }}" alt="Configuration howto">
 
 	<div class="wide">Webinterface</div>
 	<p>
