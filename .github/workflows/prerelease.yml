@@ -28,6 +28,7 @@ jobs:
           files: prerelease.cfg
           name: release-bot
           email: release-bot@lumetsnet.at
+          rebase: 'true' 
   add_artifacts:
     name: Add artifacts
     runs-on: ubuntu-latest
