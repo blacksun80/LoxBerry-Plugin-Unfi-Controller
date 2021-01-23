@@ -1,7 +1,7 @@
 on:
   release:
     # Only use the types keyword to narrow down the activity types that will trigger your workflow.
-    types: [prereleased,released]
+    types: [prereleased]
 
 name: Add artifacts to release
 
@@ -41,3 +41,19 @@ jobs:
           asset_path: ./plugin.zip
           asset_name: plugin.zip
           asset_content_type: application/zip
+      - name: remove not needed folders
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
+        run: |
+             cp resources/prerelease.cfg prerelease.cfg
+             sed -i "s/__VERSION__/$VERSION/g" prerelease.cfg
+      - name: push
+        uses: github-actions-x/commit@v2.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'master'
+          commit-message: 'publish'
+          force-add: 'true'
+          files: prerelease.cfg
+          name: release-bot
+          email: release-bot@lumetsnet.at
