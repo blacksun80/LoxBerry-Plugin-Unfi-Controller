@@ -6,7 +6,29 @@ on:
 name: Add artifacts to release
 
 jobs:
-  build:
+  publish_release:
+    name: Publish prerelease
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: update prerelease.cfg
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
+        run: |
+             cp -f resources/prerelease.cfg prerelease.cfg
+             sed -i "s/__VERSION__/$VERSION/g" prerelease.cfg
+      - name: push prerelease.cfg
+        uses: github-actions-x/commit@v2.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'master'
+          commit-message: 'Release version ${{ secrets.GITHUB_TOKEN }}'
+          force-add: 'true'
+          files: prerelease.cfg
+          name: release-bot
+          email: release-bot@lumetsnet.at
+  add_artifacts:
     name: Add artifacts
     runs-on: ubuntu-latest
     steps:
@@ -41,19 +63,4 @@ jobs:
           asset_path: ./plugin.zip
           asset_name: plugin.zip
           asset_content_type: application/zip
-      - name: remove not needed folders
-        env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
-        run: |
-             cp resources/prerelease.cfg prerelease.cfg
-             sed -i "s/__VERSION__/$VERSION/g" prerelease.cfg
-      - name: push
-        uses: github-actions-x/commit@v2.7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          push-branch: 'master'
-          commit-message: 'publish'
-          force-add: 'true'
-          files: prerelease.cfg
-          name: release-bot
-          email: release-bot@lumetsnet.at
+      
