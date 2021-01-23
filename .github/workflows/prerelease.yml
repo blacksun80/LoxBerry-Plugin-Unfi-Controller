@@ -16,7 +16,7 @@ jobs:
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
         run: |
-             cp -f resources/prerelease.cfg prerelease.cfg
+             cp resources/prerelease.cfg prerelease.cfg
              sed -i "s/__VERSION__/$VERSION/g" prerelease.cfg
       - name: push prerelease.cfg
         uses: github-actions-x/commit@v2.7
