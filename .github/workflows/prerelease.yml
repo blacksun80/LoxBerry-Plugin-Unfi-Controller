@@ -12,9 +12,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Update prerelease file
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
         run: |
-             sed -i "s/__VERSION__/$GITHUB_REF/g" resources/prerelease.cfg
+             echo $GITHUB_REF
+             sed -i "s/__VERSION__/$VERSION/g" resources/prerelease.cfg
       - uses: papeloto/action-zip@v1
         with:
           files: .
