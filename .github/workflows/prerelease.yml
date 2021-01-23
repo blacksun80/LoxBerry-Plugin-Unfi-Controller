@@ -1,0 +1,37 @@
+on:
+  release:
+    # Only use the types keyword to narrow down the activity types that will trigger your workflow.
+    types: [prereleased]
+
+name: Add artifacts to prerelease
+
+jobs:
+  build:
+    name: Add artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Update prerelease file
+        run: |
+             export VERSION=`echo $GITHUB_REF | sed --expression='s/prerelease\///g'`
+             sed -i "s/__VERSION__/$VERSION/g" resources/prerelease.cfg
+      - uses: papeloto/action-zip@v1
+        with:
+          files: .
+          dest: plugin.zip
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }} 
+          asset_path: ./plugin.zip
+          asset_name: plugin.zip
+          asset_content_type: application/zip
