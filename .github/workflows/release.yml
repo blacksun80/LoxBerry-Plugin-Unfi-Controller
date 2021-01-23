@@ -33,4 +33,3 @@ jobs:
           files: release.cfg
           name: release-bot
           email: release-bot@lumetsnet.at
-          rebase: 'true' 
