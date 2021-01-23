@@ -1,9 +1,9 @@
 on:
   release:
     # Only use the types keyword to narrow down the activity types that will trigger your workflow.
-    types: [prereleased]
+    types: [prereleased,released]
 
-name: Create prerelease
+name: Add artifacts to release
 
 jobs:
   build:
@@ -17,12 +17,12 @@ jobs:
         uses: bruceadams/get-release@v1.2.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: Update prerelease file
+      - name: Update plugin.cfg file
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
         run: |
              echo $GITHUB_REF
-             sed -i "s/__VERSION__/$VERSION/g" resources/prerelease.cfg
+             sed -i "s/__VERSION__/$VERSION/g" plugin.cfg
       - name: remove not needed folders
         run: |
              rm .git -r -f
