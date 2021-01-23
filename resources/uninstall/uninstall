@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# To use important variables from command line use the following code:
+PTEMPDIR=$1 # First argument is temp folder during install
+PSHNAME=$2  # Second argument is Plugin-Name for scipts etc.
+PDIR=$3     # Third argument is Plugin installation folder
+PVERSION=$4 # Forth argument is Plugin version
+
+echo "<INFO> Stopping and removing unifi service"
+systemctl stop unifi
+systemctl disable unifi
+rm -f /etc/systemd/system/unifi.service
+systemctl daemon-reload
