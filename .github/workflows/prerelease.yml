@@ -28,7 +28,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push-branch: 'master'
-          commit-message: 'Release version ${{ secrets.GITHUB_TOKEN }}'
+          commit-message: 'Release version ${{ github.ref }}'
           force-add: 'true'
           files: prerelease.cfg
           name: release-bot
