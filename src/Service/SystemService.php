@@ -50,6 +50,20 @@ class SystemService
         return $output === null ? "" : $output;
     }
 
+    /**
+     * Returns the last $lines lines of a log file (e.g. the UniFi server.log),
+     * or an empty string if the file does not exist yet / is not readable.
+     */
+    public function tailFile($filename, $lines = 300)
+    {
+        if (!is_readable($filename)) {
+            return "";
+        }
+        $lines = (int) $lines;
+        $content = shell_exec("tail -n $lines " . escapeshellarg($filename) . " 2>/dev/null");
+        return $content === null ? "" : $content;
+    }
+
     public function getContainerVersionFromEnv()
     {
         $filename = $this->getConfigFolder() . "/env";

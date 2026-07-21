@@ -100,14 +100,23 @@
 		</label>
 		<a href="{{ adminRouteUrl('containerlogs') }}" data-role="button" data-inline="true" data-mini="true" data-icon="action" style="margin-left:12px;">{{ trans('home.open_logs_fullpage') }}</a>
 	</div>
-	<pre id="homelogbox" style="height:40vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ logs }}</pre>
+
+	<p style="margin:0 0 4px;"><b>{{ trans('home.serverlog_title') }}</b></p>
+	<pre id="homeserverlogbox" style="height:35vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0 0 12px;">{{ serverlog }}</pre>
+
+	<p style="margin:0 0 4px;"><b>{{ trans('home.docker_title') }}</b></p>
+	<pre id="homelogbox" style="height:25vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ logs }}</pre>
 
 	<script>
 	(function () {
-		var box = document.getElementById('homelogbox');
 		var cb = document.getElementById('home_autorefresh');
-		if (!box || !cb) { return; }
-		box.scrollTop = box.scrollHeight;
+		if (!cb) { return; }
+
+		var boxes = { homeserverlogbox: 'serverlogbox', homelogbox: 'logbox' };
+		Object.keys(boxes).forEach(function (id) {
+			var box = document.getElementById(id);
+			if (box) { box.scrollTop = box.scrollHeight; }
+		});
 
 		var url = "{{ adminRouteUrl('containerlogs') }}";
 		var timer = null;
@@ -116,11 +125,15 @@
 			fetch(url, { cache: 'no-store', credentials: 'same-origin' })
 				.then(function (r) { return r.text(); })
 				.then(function (html) {
-					var src = new DOMParser().parseFromString(html, 'text/html').getElementById('logbox');
-					if (!src) { return; }
-					var atBottom = (box.scrollTop + box.clientHeight >= box.scrollHeight - 20);
-					box.textContent = src.textContent;
-					if (atBottom) { box.scrollTop = box.scrollHeight; }
+					var doc = new DOMParser().parseFromString(html, 'text/html');
+					Object.keys(boxes).forEach(function (id) {
+						var box = document.getElementById(id);
+						var src = doc.getElementById(boxes[id]);
+						if (!box || !src) { return; }
+						var atBottom = (box.scrollTop + box.clientHeight >= box.scrollHeight - 20);
+						box.textContent = src.textContent;
+						if (atBottom) { box.scrollTop = box.scrollHeight; }
+					});
 				})
 				.catch(function () {});
 		}

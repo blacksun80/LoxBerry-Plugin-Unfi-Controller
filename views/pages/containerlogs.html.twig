@@ -11,12 +11,20 @@
 	</label>
 </div>
 
-<pre id="logbox" style="height:60vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ logs }}</pre>
+<h3 style="margin-bottom:4px;">{{ trans('containerlogs.serverlog_title') }}</h3>
+<p style="margin-top:0;"><i>{{ trans('containerlogs.serverlog_desc') }}</i></p>
+<pre id="serverlogbox" style="height:40vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ serverlog }}</pre>
+
+<h3 style="margin-bottom:4px; margin-top:20px;">{{ trans('containerlogs.docker_title') }}</h3>
+<p style="margin-top:0;"><i>{{ trans('containerlogs.docker_desc') }}</i></p>
+<pre id="logbox" style="height:30vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ logs }}</pre>
 
 <script>
 (function () {
-	var box = document.getElementById('logbox');
-	if (box) { box.scrollTop = box.scrollHeight; }
+	['serverlogbox', 'logbox'].forEach(function (id) {
+		var box = document.getElementById(id);
+		if (box) { box.scrollTop = box.scrollHeight; }
+	});
 
 	var cb = document.getElementById('autorefresh');
 	var KEY = 'unifi_containerlogs_autorefresh';

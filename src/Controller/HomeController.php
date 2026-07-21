@@ -66,7 +66,8 @@ class HomeController extends AbstractController
             "versions" => $versions,
             "host_architecture" => $this->dockerHubService->getHostArchitecture(),
             "versions_unavailable_for_architecture" => $this->dockerHubService->hasVersionsUnavailableForArchitecture(),
-            "logs" => $this->sysService->getContainerLogs(400)
+            "logs" => $this->sysService->getContainerLogs(400),
+            "serverlog" => $this->sysService->tailFile("REPLACELBPLOGDIR/server.log", 300)
         ));
     }
 
@@ -121,7 +122,8 @@ class HomeController extends AbstractController
     public function containerLogsPage(): Response
     {
         return $this->render('pages/containerlogs.html.twig', array(
-            "logs" => $this->sysService->getContainerLogs(400)
+            "logs" => $this->sysService->getContainerLogs(400),
+            "serverlog" => $this->sysService->tailFile("REPLACELBPLOGDIR/server.log", 300)
         ));
     }
 }
