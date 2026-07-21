@@ -7,6 +7,8 @@ use LoxBerry\System\Paths;
 
 class SystemService
 {
+    /** Name of the docker container (see container_name in docker-compose.yml) */
+    const CONTAINER_NAME = "unifi-controller";
 
     /** @var PathProvider */
     private $pathProvider;
@@ -34,6 +36,18 @@ class SystemService
     public function restartService($serviceName)
     {
         return shell_exec("sudo systemctl restart $serviceName &");
+    }
+
+    /**
+     * Returns the last $lines lines of the docker container's log output
+     * (stdout/stderr), including the early startup phase that the UniFi
+     * server.log does not yet cover.
+     */
+    public function getContainerLogs($lines = 400)
+    {
+        $lines = (int) $lines;
+        $output = shell_exec("docker logs --tail $lines --timestamps " . self::CONTAINER_NAME . " 2>&1");
+        return $output === null ? "" : $output;
     }
 
     public function getContainerVersionFromEnv()

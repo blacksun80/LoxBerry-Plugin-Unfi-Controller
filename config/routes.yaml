@@ -8,6 +8,11 @@ logs:
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
   action: "logsPage"
 
+containerlogs:
+  route: "/containerlogs"
+  controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
+  action: "containerLogsPage"
+
 upgrade:
   route: "/upgrade"
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'

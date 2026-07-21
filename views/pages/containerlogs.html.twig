@@ -1,0 +1,39 @@
+{% extends 'pages/templates/adminBasePage.html.twig' %}
+
+{% block body %}
+<h2>{{ trans('containerlogs.headline') }}</h2>
+<p><i>{{ trans('containerlogs.description') }}</i></p>
+
+<div style="margin-bottom:8px;">
+	<a href="{{ adminRouteUrl('containerlogs') }}" data-role="button" data-inline="true" data-mini="true" data-icon="refresh">{{ trans('containerlogs.refresh') }}</a>
+	<label style="display:inline-block; margin-left:12px; vertical-align:middle;">
+		<input type="checkbox" id="autorefresh" data-role="none"> {{ trans('containerlogs.autorefresh') }}
+	</label>
+</div>
+
+<pre id="logbox" style="height:60vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ logs }}</pre>
+
+<script>
+(function () {
+	var box = document.getElementById('logbox');
+	if (box) { box.scrollTop = box.scrollHeight; }
+
+	var cb = document.getElementById('autorefresh');
+	var KEY = 'unifi_containerlogs_autorefresh';
+	var stored = localStorage.getItem(KEY);
+	var on = (stored === null) ? true : (stored === '1');
+	cb.checked = on;
+
+	var timer = null;
+	function schedule() {
+		if (cb.checked) { timer = setTimeout(function () { location.reload(); }, 5000); }
+	}
+	cb.addEventListener('change', function () {
+		localStorage.setItem(KEY, cb.checked ? '1' : '0');
+		if (timer) { clearTimeout(timer); timer = null; }
+		schedule();
+	});
+	schedule();
+})();
+</script>
+{% endblock %}

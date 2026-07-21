@@ -111,4 +111,16 @@ class HomeController extends AbstractController
         $serverlog = urlencode('REPLACELBPLOGDIR/server.log');
         return $this->render('pages/logs.html.twig', array("serverlog" => $serverlog));
     }
+
+    /**
+     * Shows the live docker container logs (useful during the "starting" phase).
+     *
+     * @return Response
+     */
+    public function containerLogsPage(): Response
+    {
+        return $this->render('pages/containerlogs.html.twig', array(
+            "logs" => $this->sysService->getContainerLogs(400)
+        ));
+    }
 }
