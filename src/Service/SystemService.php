@@ -10,6 +10,9 @@ class SystemService
     /** Name of the docker container (see container_name in docker-compose.yml) */
     const CONTAINER_NAME = "unifi-controller";
 
+    /** Name of the systemd service that runs docker compose for the container */
+    const SERVICE_NAME = "unifi";
+
     /** @var PathProvider */
     private $pathProvider;
 
@@ -47,7 +50,21 @@ class SystemService
     {
         $lines = (int) $lines;
         $output = shell_exec("docker logs --tail $lines --timestamps " . self::CONTAINER_NAME . " 2>&1");
-        return $output === null ? "" : $output;
+        if ($output === null) {
+            $output = "";
+        }
+        // During a version change the container is stopped, removed and recreated
+        // (with an image pull), so `docker logs` reports "No such container".
+        // Fall back to the service's systemd journal, which captures the compose
+        // pull/create progress, so the view keeps showing what is happening.
+        if (strpos($output, 'No such container') !== false) {
+            $journal = shell_exec("journalctl -u " . self::SERVICE_NAME . " -n $lines --no-pager 2>/dev/null");
+            if ($journal !== null && trim($journal) !== "") {
+                return $journal;
+            }
+            return "Container is being recreated / the image is downloading - please wait ...";
+        }
+        return $output;
     }
 
     /**
