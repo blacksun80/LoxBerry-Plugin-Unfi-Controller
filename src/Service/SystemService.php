@@ -46,7 +46,9 @@ class SystemService
     public function setContainerVersion($version)
     {
         $filename = $this->getConfigFolder() . "/env";
-        file_put_contents($filename, "VERSION=$version");
+        // Trailing newline is required: docker compose v2 ignores the last line
+        // of a .env file if it is not newline-terminated, leaving VERSION unset.
+        file_put_contents($filename, "VERSION=$version\n");
     }
 
     /**

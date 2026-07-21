@@ -76,11 +76,11 @@ class HomeController extends AbstractController
     public function upgrade(): Response
     {
         $request = $this->getRequest();
-        if (!$request->request->has("version")) {
+        $version = trim((string) $request->request->get("version"));
+        if ($version === "") {
             return $this->redirect($this->urlBuilder->getAdminUrl('home'));
         }
 
-        $version = $request->request->get("version");
         $this->sysService->setContainerVersion($version);
         $this->sysService->restartService(self::SERVICE_NAME);
         return $this->redirect($this->urlBuilder->getAdminUrl('home'));
