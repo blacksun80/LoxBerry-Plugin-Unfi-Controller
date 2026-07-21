@@ -11,7 +11,7 @@
 		</div>
 		<div class="lb_flex-item-spacer"></div>
 		<div class="lb_flex-item">
-			{{unifi_data.status}}
+			<span id="fld_status">{{unifi_data.status}}</span>
 		</div>
 		<div class="lb_flex-item-spacer"></div>
 		<div class="lb_flex-item-help hint">
@@ -26,7 +26,7 @@
 		</div>
 		<div class="lb_flex-item-spacer"></div>
 		<div class="lb_flex-item">
-			{{unifi_data.containerVersion}}
+			<span id="fld_container_version">{{unifi_data.containerVersion}}</span>
 
 		</div>
 		<div class="lb_flex-item-spacer"></div>
@@ -45,7 +45,7 @@
 		</div>
 		<div class="lb_flex-item-spacer"></div>
 		<div class="lb_flex-item">
-			{{unifi_data.version}}
+			<span id="fld_controller_version">{{unifi_data.version}}</span>
 		</div>
 		<div class="lb_flex-item-spacer"></div>
 		<div class="lb_flex-item-help hint">
@@ -145,6 +145,27 @@
 			schedule();
 		});
 		schedule();
+	})();
+
+	// Poll the status fields (service status, container/controller version)
+	// so "starting" turns into the real version without a full page reload.
+	(function () {
+		var url = "{{ adminRouteUrl('statusfragment') }}";
+		var fields = ['fld_status', 'fld_container_version', 'fld_controller_version'];
+		function poll() {
+			fetch(url, { cache: 'no-store', credentials: 'same-origin' })
+				.then(function (r) { return r.text(); })
+				.then(function (html) {
+					var doc = new DOMParser().parseFromString(html, 'text/html');
+					fields.forEach(function (id) {
+						var src = doc.getElementById(id);
+						var dst = document.getElementById(id);
+						if (src && dst) { dst.textContent = src.textContent.trim(); }
+					});
+				})
+				.catch(function () {});
+		}
+		setInterval(poll, 10000);
 	})();
 	</script>
 

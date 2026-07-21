@@ -126,4 +126,22 @@ class HomeController extends AbstractController
             "serverlog" => $this->sysService->tailFile("REPLACELBPLOGDIR/server.log", 300)
         ));
     }
+
+    /**
+     * Lightweight status fragment for the home page to poll via AJAX, so the
+     * status/version fields update without a full page reload (which would
+     * re-query the Docker Hub version list).
+     *
+     * @return Response
+     */
+    public function statusFragment(): Response
+    {
+        $unifi_url = "https://" . $this->getRequest()->getHost() . ":8443";
+        $unifi_data = new UnifiControllerStatus(
+            $this->getUnifiVersion($unifi_url),
+            $this->getContainerVersion(),
+            $this->sysService->getServiceStatus(self::SERVICE_NAME)
+        );
+        return $this->render('pages/status.html.twig', array("unifi_data" => $unifi_data));
+    }
 }

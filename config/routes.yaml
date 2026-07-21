@@ -13,6 +13,11 @@ containerlogs:
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
   action: "containerLogsPage"
 
+statusfragment:
+  route: "/statusfragment"
+  controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
+  action: "statusFragment"
+
 upgrade:
   route: "/upgrade"
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
