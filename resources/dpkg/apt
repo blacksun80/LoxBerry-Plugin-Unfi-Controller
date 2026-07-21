@@ -1,1 +1,5 @@
-docker-compose
+# docker-compose is provided by the natively installed Docker Engine via the
+# "docker compose" CLI plugin (package docker-compose-plugin).
+# Installing the Debian "docker-compose" package here conflicts with it, because
+# both ship /usr/libexec/docker/cli-plugins/docker-compose. So no apt dependency
+# is declared; the plugin relies on an already-present Docker Engine + compose.
