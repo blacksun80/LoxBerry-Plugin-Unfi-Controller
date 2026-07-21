@@ -8,6 +8,20 @@ if [ "$status" == "7" ]; then
     exit 2
 fi
 
+# Warn (do not block) on low-memory hosts. The real constraint is RAM, not the
+# CPU architecture or Pi model: the UniFi controller (Java heap + MongoDB) needs
+# ~1-2 GB. On 1 GB devices such as the Raspberry Pi 3B it runs slowly or crashes.
+echo "<INFO> Checking available memory"
+MEM_TOTAL_MB=$(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 ))
+echo "<INFO> Detected ${MEM_TOTAL_MB} MB RAM"
+if [ "$MEM_TOTAL_MB" -lt 1500 ]; then
+    echo "<WARNING> This system has only ${MEM_TOTAL_MB} MB RAM."
+    echo "<WARNING> The UniFi controller (Java + MongoDB) needs ~1-2 GB. On 1 GB devices"
+    echo "<WARNING> (e.g. Raspberry Pi 3B) it may be slow or unstable."
+    echo "<WARNING> Consider lowering MEM_LIMIT in src/Docker/docker-compose.yml (e.g. 512),"
+    echo "<WARNING> or use a device with more RAM (Raspberry Pi 4 with 2 GB+ recommended)."
+fi
+
 
 echo "<INFO> Copying plugin configuration into installation"
 cp ./plugin.cfg ./config/plugin.cfg
