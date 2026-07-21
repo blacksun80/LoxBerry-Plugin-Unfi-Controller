@@ -65,7 +65,8 @@ class HomeController extends AbstractController
             "unifi_data" => $unifi_data,
             "versions" => $versions,
             "host_architecture" => $this->dockerHubService->getHostArchitecture(),
-            "versions_unavailable_for_architecture" => $this->dockerHubService->hasVersionsUnavailableForArchitecture()
+            "versions_unavailable_for_architecture" => $this->dockerHubService->hasVersionsUnavailableForArchitecture(),
+            "logs" => $this->sysService->getContainerLogs(400)
         ));
     }
 

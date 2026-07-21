@@ -90,6 +90,51 @@
 		</div>
 	</form>
 
+	<div class="wide">{{ trans('home.container_logs') }}</div>
+	<p>
+		<i>{{ trans('home.container_logs_desc') }}</i>
+	</p>
+	<div style="margin-bottom:8px;">
+		<label style="display:inline-block; vertical-align:middle;">
+			<input type="checkbox" id="home_autorefresh" data-role="none" checked> {{ trans('home.autorefresh') }}
+		</label>
+		<a href="{{ adminRouteUrl('containerlogs') }}" data-role="button" data-inline="true" data-mini="true" data-icon="action" style="margin-left:12px;">{{ trans('home.open_logs_fullpage') }}</a>
+	</div>
+	<pre id="homelogbox" style="height:40vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre; border-radius:4px; margin:0;">{{ logs }}</pre>
+
+	<script>
+	(function () {
+		var box = document.getElementById('homelogbox');
+		var cb = document.getElementById('home_autorefresh');
+		if (!box || !cb) { return; }
+		box.scrollTop = box.scrollHeight;
+
+		var url = "{{ adminRouteUrl('containerlogs') }}";
+		var timer = null;
+
+		function refresh() {
+			fetch(url, { cache: 'no-store', credentials: 'same-origin' })
+				.then(function (r) { return r.text(); })
+				.then(function (html) {
+					var src = new DOMParser().parseFromString(html, 'text/html').getElementById('logbox');
+					if (!src) { return; }
+					var atBottom = (box.scrollTop + box.clientHeight >= box.scrollHeight - 20);
+					box.textContent = src.textContent;
+					if (atBottom) { box.scrollTop = box.scrollHeight; }
+				})
+				.catch(function () {});
+		}
+		function schedule() {
+			if (cb.checked) { timer = setTimeout(function () { refresh(); schedule(); }, 5000); }
+		}
+		cb.addEventListener('change', function () {
+			if (timer) { clearTimeout(timer); timer = null; }
+			schedule();
+		});
+		schedule();
+	})();
+	</script>
+
 	<div class="wide">{{ trans('home.configuration') }}</div>
 	<p>
 		<i>{{ trans('home.configuration_info') }}</i>
