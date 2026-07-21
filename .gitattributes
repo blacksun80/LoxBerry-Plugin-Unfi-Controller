@@ -1,0 +1,8 @@
+# Keep line endings LF in the repo so shell scripts and configs stay valid on
+# the (Linux) LoxBerry even when edited/checked out on Windows.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
