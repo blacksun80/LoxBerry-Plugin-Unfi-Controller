@@ -6,7 +6,7 @@ services:
     env_file:
       - REPLACELBPCONFIGDIR/unifi.env
     environment:
-      - MEM_LIMIT=1024M #optional
+      - MEM_LIMIT=1024 #optional  (megabytes, number only — the image appends "M"; "1024M" would become -Xmx1024MM)
     volumes:
       - REPLACELBPDATADIR/data:/config
     ports:
