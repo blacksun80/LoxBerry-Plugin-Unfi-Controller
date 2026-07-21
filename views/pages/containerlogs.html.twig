@@ -5,6 +5,7 @@
 <p><i>{{ trans('containerlogs.description') }}</i></p>
 
 <div style="margin-bottom:8px;">
+	<a href="{{ adminRouteUrl('home') }}" data-role="button" data-inline="true" data-mini="true" data-icon="back">{{ trans('containerlogs.back') }}</a>
 	<a href="{{ adminRouteUrl('containerlogs') }}" data-role="button" data-inline="true" data-mini="true" data-icon="refresh">{{ trans('containerlogs.refresh') }}</a>
 	<label style="display:inline-block; margin-left:12px; vertical-align:middle;">
 		<input type="checkbox" id="autorefresh" data-role="none"> {{ trans('containerlogs.autorefresh') }}
