@@ -62,7 +62,10 @@ class HomeController extends AbstractController
         $versions = $this->dockerHubService->getVersions();
         return $this->render('pages/home.html.twig', array(
             "unifi_url" => $unifi_url,
-            "unifi_data" => $unifi_data, "versions" => $versions
+            "unifi_data" => $unifi_data,
+            "versions" => $versions,
+            "host_architecture" => $this->dockerHubService->getHostArchitecture(),
+            "versions_unavailable_for_architecture" => $this->dockerHubService->hasVersionsUnavailableForArchitecture()
         ));
     }
 

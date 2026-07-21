@@ -83,6 +83,9 @@
 			</div>
 			<div class="lb_flex-item-help hint">
 				{{ trans('home.settings_save_hint') }}
+				{% if versions_unavailable_for_architecture %}
+					<p><b>{{ trans('home.architecture_notice')|replace({'%architecture%': host_architecture}) }}</b></p>
+				{% endif %}
 			</div>
 		</div>
 	</form>
