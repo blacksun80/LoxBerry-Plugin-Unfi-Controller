@@ -26,6 +26,44 @@ image with the modern **`lscr.io/linuxserver/unifi-network-application`** plus a
   are `latest` / `9.0.108` (no `version-` prefix). Default version in `postroot.sh`
   is `latest`.
 - Data is **not** auto-migrated from the old image; export/restore a UniFi backup.
+- `MONGO_PASS` is **auto-generated** at install (`postroot.sh`, random 32-char,
+  `tr -dc 'A-Za-z0-9' < /dev/urandom 2>/dev/null | head -c 32` — stderr redirected
+  because `tr` hits a harmless "Broken pipe" once `head` stops reading), stored in
+  the plugin env file (survives upgrades) and written into both
+  `docker-compose.yml` (`${MONGO_PASS}`, resolved via the auto-loaded `.env`
+  symlink in the compose working directory) and `init-mongo.js` (via `sed`
+  replacing `MONGO_PASS_PLACEHOLDER`). Aborts the install if generation produced
+  fewer than 32 chars.
+- `1900:1900/udp` (SSDP) is **commented out** in `docker-compose.yml` by default:
+  commonly already bound by another host service (LoxBerry itself uses SSDP) and
+  not needed for admin access via 8443. A live conflict shows as `driver failed
+  programming external connectivity ... address already in use`.
+- Two containers can be independently stuck: `resetContainers()` /
+  `HomeController::reset()` (the home page "Reset" button) force-removes both
+  (`docker rm -f unifi-network-application unifi-db`) and restarts the service so
+  compose recreates them + the network cleanly - fixes both "stuck in Created"
+  and "references a network ID that no longer exists" (e.g. after `docker system
+  prune` removed the network while a container existed but was not running).
+- `SystemService::getDiagnostics()` (Diagnostics page) exists because the normal
+  log views can go **silently blank**: `docker logs` on a container that exists
+  but was never started (e.g. after the port/network issues above) returns empty
+  output with no error, so the "No such container" journalctl fallback never
+  triggers. Diagnostics always includes `systemctl status unifi` (the actual
+  failure reason), `docker ps -a` state for both containers, disk space, and
+  **both** containers' raw logs (previously only the app container's logs were
+  shown anywhere in the GUI, never MongoDB's - relevant since mongo exiting with
+  code 100 on its own is invisible otherwise). The home page shows a "failed"
+  banner linking to Diagnostics, live-toggled by the status poller.
+- The UniFi app repeatedly logging `Manifest request to ULP failed ... Connect to
+  http://127.0.0.1:9080 ... Connection refused` is **cosmetic and expected** in
+  this bare Docker image: port 9080 is served by "UniFi OS" on real Ubiquiti
+  hardware (UDM/Cloud Gateway), which does not exist in this container-only
+  deployment. Does not affect adoption or normal operation.
+- The bundled `config_howto.png` (and its instructions) show the **UniFi 5.6.39**
+  UI ("Settings → Controller → Override inform host..."); the setting still
+  exists in modern UniFi Network Application versions but the menu was
+  reorganized multiple times since - the screenshot/instructions are stale for
+  this branch and the exact current path is unconfirmed.
 
 All the QoL features from `master` (live logs, auto-refresh status, arch filter,
 back button, low-RAM warning, clean uninstall) are kept and adapted.
@@ -88,14 +126,20 @@ the **install log** plus the plugin's own pages and SSH on the LoxBerry.
   are reached by **path URL**: `/admin/plugins/unifi/<route>` (routes from
   `routes.yaml`; scheme `/admin/plugins/{pluginDir}/{route}`). Provide explicit
   in-page buttons for navigation (e.g. the "back to overview" button).
-- **Two logs, two sources.** `docker logs unifi-controller` shows only container
+- **Two logs, two sources.** `docker logs <app container>` shows only container
   init (s6) and stops once the Java app takes over; the real controller startup is
   the UniFi `server.log` in the data volume (`data/logs/server.log`, linked into
   the LoxBerry log dir, readable because the container runs as PUID = `loxberry`).
   During a version change the container is removed/recreated (image pull), so
   `docker logs` reports "No such container" — `SystemService::getContainerLogs`
-  then falls back to the `unifi` systemd journal (pull progress).
-- Names: container `unifi-controller`, systemd service `unifi`.
+  then falls back to the `unifi` systemd journal (pull progress). (On the
+  `UniFi-Network-Server` branch, see also the Diagnostics page below for the case
+  where the container exists but was never started - that fallback does not
+  trigger and the box goes blank instead.)
+- Names on `master`: container `unifi-controller`, systemd service `unifi`. On
+  `UniFi-Network-Server`: app container `unifi-network-application`, database
+  container `unifi-db`, systemd service still `unifi`
+  (`SystemService::CONTAINER_NAME` / `MONGO_CONTAINER_NAME`).
 - **Downgrading** UniFi versions usually breaks the controller (it cannot downgrade
   its database). Treat the switcher as newer-only.
 - The `linuxserver/unifi-controller` image is **deprecated** (last 8.0.24); future

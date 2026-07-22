@@ -20,6 +20,12 @@
 		<div class="lb_flex-item-spacer"></div>
 	</div>
 
+	<div id="failed_diag_hint" class="lb_flex-container" style="{% if unifi_data.status != 'failed' %}display:none;{% endif %}">
+		<div class="lb_flex-item-help hint" style="width:100%;">
+			<b>{{ trans('home.failed_hint') }}</b> <a href="{{ adminRouteUrl('diagnostics') }}">{{ trans('home.open_diagnostics') }}</a>
+		</div>
+	</div>
+
 	<div class="lb_flex-container">
 		<div class="lb_flex-item-label">
 			<label class="control-label">{{ trans('home.container_version') }}</label>
@@ -168,6 +174,7 @@
 	(function () {
 		var url = "{{ adminRouteUrl('statusfragment') }}";
 		var fields = ['fld_status', 'fld_container_version', 'fld_controller_version'];
+		var hint = document.getElementById('failed_diag_hint');
 		function poll() {
 			fetch(url, { cache: 'no-store', credentials: 'same-origin' })
 				.then(function (r) { return r.text(); })
@@ -178,6 +185,11 @@
 						var dst = document.getElementById(id);
 						if (src && dst) { dst.textContent = src.textContent.trim(); }
 					});
+					if (hint) {
+						var statusEl = doc.getElementById('fld_status');
+						var isFailed = statusEl && statusEl.textContent.trim() === 'failed';
+						hint.style.display = isFailed ? '' : 'none';
+					}
 				})
 				.catch(function () {});
 		}
