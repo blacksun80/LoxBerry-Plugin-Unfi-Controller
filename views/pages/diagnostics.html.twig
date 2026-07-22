@@ -7,7 +7,41 @@
 <div style="margin-bottom:8px;">
 	<a href="{{ adminRouteUrl('home') }}" data-role="button" data-inline="true" data-mini="true" data-icon="back">{{ trans('diagnostics.back') }}</a>
 	<a href="{{ adminRouteUrl('diagnostics') }}" data-role="button" data-inline="true" data-mini="true" data-icon="refresh">{{ trans('diagnostics.refresh') }}</a>
+	<label style="display:inline-block; margin-left:12px; vertical-align:middle;">
+		<input type="checkbox" id="autorefresh" data-role="none" checked> {{ trans('diagnostics.autorefresh') }}
+	</label>
 </div>
 
-<pre id="diagnosticsbox" style="height:70vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre-wrap; word-break:break-all; border-radius:4px; margin:0;">{{ diagnostics }}</pre>
+<pre id="diagnosticsbox" style="height:75vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre-wrap; word-break:break-all; border-radius:4px; margin:0;">{{ diagnostics }}</pre>
+
+<script>
+(function () {
+	var cb = document.getElementById('autorefresh');
+	var box = document.getElementById('diagnosticsbox');
+	var url = "{{ adminRouteUrl('diagnostics') }}";
+	var timer = null;
+
+	function refresh() {
+		fetch(url, { cache: 'no-store', credentials: 'same-origin' })
+			.then(function (r) { return r.text(); })
+			.then(function (html) {
+				var doc = new DOMParser().parseFromString(html, 'text/html');
+				var src = doc.getElementById('diagnosticsbox');
+				if (!box || !src) { return; }
+				var scrollTop = box.scrollTop;
+				box.textContent = src.textContent;
+				box.scrollTop = scrollTop;
+			})
+			.catch(function () {});
+	}
+	function schedule() {
+		if (cb.checked) { timer = setTimeout(function () { refresh(); schedule(); }, 5000); }
+	}
+	cb.addEventListener('change', function () {
+		if (timer) { clearTimeout(timer); timer = null; }
+		schedule();
+	});
+	schedule();
+})();
+</script>
 {% endblock %}
