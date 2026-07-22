@@ -64,7 +64,11 @@ fi
 # file is preserved on update). Alphanumeric only, so it is safe for sed/.env.
 if ! grep -q '^MONGO_PASS=' $PCONFIG/env; then
     echo "<INFO> Generating MongoDB password"
-    MONGO_PASS=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32)
+    MONGO_PASS=$(tr -dc 'A-Za-z0-9' < /dev/urandom 2>/dev/null | head -c 32)
+    if [ ${#MONGO_PASS} -lt 32 ]; then
+        echo "<ERROR> Failed to generate a MongoDB password (got ${#MONGO_PASS} chars)."
+        exit 2
+    fi
     echo "MONGO_PASS=$MONGO_PASS" >> $PCONFIG/env
     chown loxberry:loxberry $PCONFIG/env
 fi
