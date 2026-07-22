@@ -28,7 +28,10 @@ services:
       - 3478:3478/udp
       - 10001:10001/udp
       - 8080:8080
-      - 1900:1900/udp #optional
+      # 1900/udp (SSDP local discovery) intentionally NOT mapped: commonly
+      # already bound by another host service (e.g. minissdpd) and not needed
+      # for admin access via 8443. Uncomment if you know 1900/udp is free.
+      # - 1900:1900/udp #optional
       - 8843:8843 #optional
       - 8880:8880 #optional
       - 6789:6789 #optional
