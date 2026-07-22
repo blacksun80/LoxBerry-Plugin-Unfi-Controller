@@ -1,27 +1,42 @@
 ---
-version: "2.1"
+# Standalone example (NOT the file the plugin runs — that is src/Docker/docker-compose.yml
+# with LoxBerry REPLACE... placeholders). Kept as a plain reference of the setup.
+#
+# !!! Change MONGO_PASS here AND the matching password in src/Docker/init-mongo.js.
 services:
-  unifi-controller:
-    image: linuxserver/unifi-controller:${VERSION}
-    container_name: unifi-controller
+  unifi-network-application:
+    image: lscr.io/linuxserver/unifi-network-application:${VERSION:-latest}
+    container_name: unifi-network-application
     environment:
       - PUID=1000
       - PGID=1000
-      - MEM_LIMIT=1024M #optional
+      - MONGO_USER=unifi
+      - MONGO_PASS=unifipass
+      - MONGO_HOST=unifi-db
+      - MONGO_PORT=27017
+      - MONGO_DBNAME=unifi
+      - MEM_LIMIT=1024 #optional
+      - MEM_STARTUP=256 #optional
     volumes:
-      - ./test:/config
-    networks:
-      - nginx_vlan
+      - ./data:/config
     ports:
+      - 8443:8443
       - 3478:3478/udp
       - 10001:10001/udp
       - 8080:8080
-      - 8443:8443
+      - 1900:1900/udp #optional
+      - 8843:8843 #optional
+      - 8880:8880 #optional
+      - 6789:6789 #optional
+      - 5514:5514/udp #optional
+    depends_on:
+      - unifi-db
     restart: unless-stopped
-networks:
-  nginx_vlan:
-    driver: macvlan
-    driver_opts:
-      parent: eth0
-    ipam:
-      driver: default
+
+  unifi-db:
+    image: docker.io/mongo:4.4
+    container_name: unifi-db
+    volumes:
+      - ./db:/data/db
+      - ./src/Docker/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    restart: unless-stopped

@@ -6,7 +6,7 @@ use Symfony\Component\HttpClient\HttpClient;
 
 class DockerHubService
 {
-    const SEARCH_URL="https://hub.docker.com/v2/repositories/linuxserver/unifi-controller/tags/?page_size=100&page=1&name=version-&ordering=last_updated";
+    const SEARCH_URL="https://hub.docker.com/v2/repositories/linuxserver/unifi-network-application/tags/?page_size=100&page=1&ordering=last_updated";
 
     /** @var array|null cached, sorted (newest first) multi-arch tag results from Docker Hub */
     private $cachedResults = null;
@@ -60,7 +60,7 @@ class DockerHubService
 
     /**
      * Fetches and caches the Docker Hub tag results, limited to merged multi-arch tags
-     * (i.e. "version-x.y.z", not the single-arch "amd64-version-x.y.z" variants)
+     * (e.g. "latest" or "9.0.108", not the single-arch "amd64-..." / "arm64v8-..." variants)
      */
     private function getMultiArchResults(): array
     {

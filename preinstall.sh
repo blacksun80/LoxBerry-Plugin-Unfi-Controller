@@ -8,6 +8,21 @@ if [ "$status" == "7" ]; then
     exit 2
 fi
 
+# 64-bit is required: the UniFi Network Application and MongoDB are only published
+# as 64-bit images (amd64 / arm64). There are no arm32 images, so a 32-bit host
+# cannot run this plugin at all - block the install with a clear message.
+echo "<INFO> Checking CPU architecture (64-bit required)"
+ARCH=$(uname -m)
+case "$ARCH" in
+    x86_64|amd64|aarch64|arm64) echo "<OK> 64-bit architecture: $ARCH" ;;
+    *)
+        echo "<ERROR> Detected 32-bit / unsupported architecture: $ARCH"
+        echo "<ERROR> The UniFi Network Application and MongoDB are only available as 64-bit"
+        echo "<ERROR> images (amd64 / arm64). A 64-bit LoxBerry (Pi 4/5 or x86) is required."
+        exit 2
+        ;;
+esac
+
 # Warn (do not block) on low-memory hosts. The real constraint is RAM, not the
 # CPU architecture or Pi model: the UniFi controller (Java heap + MongoDB) needs
 # ~1-2 GB. On 1 GB devices such as the Raspberry Pi 3B it runs slowly or crashes.

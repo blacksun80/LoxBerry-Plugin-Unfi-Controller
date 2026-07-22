@@ -7,23 +7,28 @@ PDIR=$3     # Third argument is Plugin installation folder
 PVERSION=$4 # Forth argument is Plugin version
 
 echo "<INFO> Stopping and removing unifi service"
-# ExecStop of the unit runs "docker compose down" (removes container + network).
+# ExecStop of the unit runs "docker compose down" (removes containers + network).
 systemctl stop unifi
 systemctl disable unifi
 rm -f /etc/systemd/system/unifi.service
 systemctl daemon-reload
 
-echo "<INFO> Removing unifi-controller container (fallback, in case compose down did not run)"
-docker rm -f unifi-controller 2>/dev/null
+echo "<INFO> Removing unifi containers (fallback, in case compose down did not run)"
+docker rm -f unifi-network-application unifi-db 2>/dev/null
 
-echo "<INFO> Removing unifi-controller docker image(s) to free disk space"
-IMAGES=$(docker images 'linuxserver/unifi-controller' -q | sort -u)
+echo "<INFO> Removing docker image(s) to free disk space"
+# Only our own images: the (plugin-specific) network-application image and the
+# exact mongo tag we use. docker refuses to remove an image still used by a
+# running container, so a mongo:4.4 shared with another app stays untouched.
+IMAGES=$(docker images 'lscr.io/linuxserver/unifi-network-application' -q; docker images 'mongo:4.4' -q)
+IMAGES=$(echo "$IMAGES" | sort -u)
 if [ -n "$IMAGES" ]; then
     docker rmi -f $IMAGES 2>/dev/null
 fi
 
 # NOTE: The Docker engine and Portainer are intentionally NOT removed here. They
 # are provided by the Docker plugin and shared with other plugins/containers.
-# The plugin files and the UniFi data (data/plugins/unifi) are removed by LoxBerry.
+# The plugin files and the UniFi + MongoDB data (data/plugins/unifi) are removed
+# by LoxBerry.
 
 exit 0

@@ -1,22 +1,46 @@
 ---
+# UniFi Network Application (successor of the deprecated unifi-controller image)
+# plus its now-required external MongoDB.
+#
+# Requires a 64-bit host (amd64 / arm64). There are no arm32 images for these.
+#
+# !!! BEFORE FIRST START: change the MongoDB password below (MONGO_PASS) AND the
+# !!! matching password in init-mongo.js - both must be identical.
 services:
-  unifi-controller:
-    image: linuxserver/unifi-controller:${VERSION}
-    container_name: unifi-controller
+  unifi-network-application:
+    image: lscr.io/linuxserver/unifi-network-application:${VERSION}
+    container_name: unifi-network-application
     env_file:
       - REPLACELBPCONFIGDIR/unifi.env
     environment:
-      - MEM_LIMIT=1024 #optional  (megabytes, number only — the image appends "M"; "1024M" would become -Xmx1024MM)
+      - MONGO_USER=unifi
+      - MONGO_PASS=unifipass          # CHANGE THIS - must match init-mongo.js
+      - MONGO_HOST=unifi-db
+      - MONGO_PORT=27017
+      - MONGO_DBNAME=unifi
+      - MEM_LIMIT=1024                 #optional - max Java heap in MB (number only)
+      - MEM_STARTUP=256               #optional - initial Java heap in MB
     volumes:
       - REPLACELBPDATADIR/data:/config
     ports:
+      - 8443:8443
       - 3478:3478/udp
       - 10001:10001/udp
       - 8080:8080
-      - 8443:8443
-     
+      - 1900:1900/udp #optional
       - 8843:8843 #optional
       - 8880:8880 #optional
       - 6789:6789 #optional
-      - 5514:5514 #optional
+      - 5514:5514/udp #optional
+    depends_on:
+      - unifi-db
+    restart: unless-stopped
+
+  unifi-db:
+    # mongo:4.4 runs on arm64 (Pi 4/5) and does not require AVX on x86.
+    image: docker.io/mongo:4.4
+    container_name: unifi-db
+    volumes:
+      - REPLACELBPDATADIR/db:/data/db
+      - REPLACELBPDATADIR/src/Docker/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     restart: unless-stopped

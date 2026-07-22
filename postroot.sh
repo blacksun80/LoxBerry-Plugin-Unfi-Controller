@@ -54,9 +54,9 @@ if [ -d /tmp/$PTEMPDIR\_upgrade ]; then
     rm -f -r /tmp/$PTEMPDIR\_upgrade
 fi
 
-if [ ! -f $PCONFIG/env ]; then 
+if [ ! -f $PCONFIG/env ]; then
     echo "<INFO> Setting controller version"
-    echo "VERSION=version-6.0.43" > $PCONFIG/env
+    echo "VERSION=latest" > $PCONFIG/env
     chown loxberry:loxberry $PCONFIG/env
 fi
 

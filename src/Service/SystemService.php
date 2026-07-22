@@ -8,7 +8,7 @@ use LoxBerry\System\Paths;
 class SystemService
 {
     /** Name of the docker container (see container_name in docker-compose.yml) */
-    const CONTAINER_NAME = "unifi-controller";
+    const CONTAINER_NAME = "unifi-network-application";
 
     /** Name of the systemd service that runs docker compose for the container */
     const SERVICE_NAME = "unifi";

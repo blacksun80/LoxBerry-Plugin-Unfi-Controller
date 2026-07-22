@@ -4,7 +4,31 @@ Guidance for working on this plugin.
 
 This is a **fork** of `romanlum/LoxBerry-Plugin-Unfi-Controller` (git remote
 `upstream`); this fork's remote is `origin` (blacksun80). The plugin is used
-directly via the `master` ZIP; there is no published release/auto-update chain.
+directly via the branch ZIP; there is no published release/auto-update chain.
+
+## Branch note: `UniFi-Network-Server` (this branch)
+
+This branch replaces the deprecated all-in-one `linuxserver/unifi-controller`
+image with the modern **`lscr.io/linuxserver/unifi-network-application`** plus a
+**separate MongoDB** container. Differences from `master`:
+
+- `src/Docker/docker-compose.yml` defines **two** services: `unifi-network-application`
+  (app, `container_name: unifi-network-application`) and `unifi-db`
+  (`mongo:4.4`, `container_name: unifi-db`). `mongo:4.4` is chosen for arm64 support
+  and no AVX requirement on x86.
+- `src/Docker/init-mongo.js` creates the `unifi` DB user on first mongo start.
+  The password is a **placeholder** (`unifipass`) that must be changed in **both**
+  the compose file (`MONGO_PASS`) and `init-mongo.js` before first launch.
+- **64-bit only.** `preinstall.sh` blocks the install on 32-bit (no arm32 images).
+- `SystemService::CONTAINER_NAME = "unifi-network-application"` (logs/stats target
+  the app container).
+- `DockerHubService::SEARCH_URL` queries the `unifi-network-application` repo; tags
+  are `latest` / `9.0.108` (no `version-` prefix). Default version in `postroot.sh`
+  is `latest`.
+- Data is **not** auto-migrated from the old image; export/restore a UniFi backup.
+
+All the QoL features from `master` (live logs, auto-refresh status, arch filter,
+back button, low-RAM warning, clean uninstall) are kept and adapted.
 
 ## What this is
 
