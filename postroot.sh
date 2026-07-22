@@ -60,6 +60,20 @@ if [ ! -f $PCONFIG/env ]; then
     chown loxberry:loxberry $PCONFIG/env
 fi
 
+# Generate a random MongoDB password once and keep it across upgrades (the env
+# file is preserved on update). Alphanumeric only, so it is safe for sed/.env.
+if ! grep -q '^MONGO_PASS=' $PCONFIG/env; then
+    echo "<INFO> Generating MongoDB password"
+    MONGO_PASS=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32)
+    echo "MONGO_PASS=$MONGO_PASS" >> $PCONFIG/env
+    chown loxberry:loxberry $PCONFIG/env
+fi
+
+# Write the (generated) password into the mongo init script. It only takes effect
+# on the very first mongo start (empty data dir); on later runs it is harmless.
+MONGO_PASS=$(grep '^MONGO_PASS=' $PCONFIG/env | cut -d '=' -f 2-)
+sed -i "s/MONGO_PASS_PLACEHOLDER/$MONGO_PASS/g" $PDATA/src/Docker/init-mongo.js
+
 echo "<INFO> Updating service config"
 ln -f -s $PCONFIG/env $PDATA/src/Docker/.env
 ln -f -s $PDATA/src/Docker/unifi.service /etc/systemd/system/unifi.service

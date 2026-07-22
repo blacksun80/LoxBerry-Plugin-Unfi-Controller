@@ -4,8 +4,9 @@
 #
 # Requires a 64-bit host (amd64 / arm64). There are no arm32 images for these.
 #
-# !!! BEFORE FIRST START: change the MongoDB password below (MONGO_PASS) AND the
-# !!! matching password in init-mongo.js - both must be identical.
+# The MongoDB password (MONGO_PASS) is generated automatically at install time
+# and stored in the plugin's env file; ${MONGO_PASS} is substituted from there.
+# init-mongo.js gets the same generated value written in by postroot.sh.
 services:
   unifi-network-application:
     image: lscr.io/linuxserver/unifi-network-application:${VERSION}
@@ -14,7 +15,7 @@ services:
       - REPLACELBPCONFIGDIR/unifi.env
     environment:
       - MONGO_USER=unifi
-      - MONGO_PASS=unifipass          # CHANGE THIS - must match init-mongo.js
+      - MONGO_PASS=${MONGO_PASS}
       - MONGO_HOST=unifi-db
       - MONGO_PORT=27017
       - MONGO_DBNAME=unifi

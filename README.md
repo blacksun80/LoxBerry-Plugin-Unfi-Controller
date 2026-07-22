@@ -24,16 +24,17 @@ application version, watch it start live, and open the UniFi web interface.
 - Enough free disk space and RAM: the application (Java) + MongoDB need roughly
   **1–2 GB RAM**; a Raspberry Pi 3B (1 GB) is marginal.
 
-## Before the first start — set the database password
+## Database password
 
-The MongoDB password ships as the placeholder `unifipass`. Change it in **both**
-places (they must match), then (re)start:
+The MongoDB password is **generated automatically at install time** (a random
+32-char value), stored in the plugin's env file and written into both the compose
+file (`${MONGO_PASS}`) and `init-mongo.js`. Nothing to set by hand, and it is unique
+per installation. It is kept across plugin upgrades.
 
-- `src/Docker/docker-compose.yml` → `MONGO_PASS=...`
-- `src/Docker/init-mongo.js` → the `pwd` value
-
-`init-mongo.js` only runs while the MongoDB data directory is still empty (first
-start), so set the password *before* the very first launch.
+Security note: MongoDB is **not exposed** — the `unifi-db` container publishes no
+port, so it is only reachable by the app over the internal Docker network, never
+from the host or outside. That network isolation is the actual protection; the
+generated password is good hygiene on top of it.
 
 ## Installation
 

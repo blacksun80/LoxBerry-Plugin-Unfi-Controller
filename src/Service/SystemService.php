@@ -84,16 +84,39 @@ class SystemService
     public function getContainerVersionFromEnv()
     {
         $filename = $this->getConfigFolder() . "/env";
-        $contents =  file_get_contents($filename);
-        return trim(explode('=', $contents)[1]);
+        // The env file holds several lines (VERSION, MONGO_PASS, ...); read the
+        // VERSION line specifically instead of splitting the whole file.
+        if (is_readable($filename)) {
+            foreach (file($filename, FILE_IGNORE_NEW_LINES) as $line) {
+                if (strpos($line, 'VERSION=') === 0) {
+                    return trim(substr($line, strlen('VERSION=')));
+                }
+            }
+        }
+        return "";
     }
 
     public function setContainerVersion($version)
     {
         $filename = $this->getConfigFolder() . "/env";
-        // Trailing newline is required: docker compose v2 ignores the last line
-        // of a .env file if it is not newline-terminated, leaving VERSION unset.
-        file_put_contents($filename, "VERSION=$version\n");
+        // Update only the VERSION line and keep every other line (e.g. MONGO_PASS).
+        // A trailing newline is required: docker compose v2 ignores the last line
+        // of a .env file if it is not newline-terminated, leaving the value unset.
+        $lines = is_readable($filename) ? file($filename, FILE_IGNORE_NEW_LINES) : array();
+        $out = array();
+        $found = false;
+        foreach ($lines as $line) {
+            if (strpos($line, 'VERSION=') === 0) {
+                $out[] = "VERSION=$version";
+                $found = true;
+            } elseif (trim($line) !== '') {
+                $out[] = $line;
+            }
+        }
+        if (!$found) {
+            array_unshift($out, "VERSION=$version");
+        }
+        file_put_contents($filename, implode("\n", $out) . "\n");
     }
 
     /**
