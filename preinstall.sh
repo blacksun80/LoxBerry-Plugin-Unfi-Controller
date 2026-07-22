@@ -1,12 +1,19 @@
 #!/bin/bash
-echo "<INFO> Checking if docker is installed"
-rep=$(curl -s --unix-socket /var/run/docker.sock http://ping > /dev/null)
+# Docker is mandatory. Verify the daemon answers on its unix socket AS THIS USER
+# (loxberry) - a working socket returns exit 0 (even the 404 for /ping counts).
+# Any non-zero means: socket missing, daemon down, or loxberry has no access.
+echo "<INFO> Checking if docker is available"
+curl -s --unix-socket /var/run/docker.sock http://ping >/dev/null 2>&1
 status=$?
-if [ "$status" == "7" ]; then
-    echo '<ERROR> Docker is not available.'
-    echo '<ERROR> This plugin needs the docker plugin https://www.loxwiki.eu/display/LOXBERRY/Docker.'
+if [ "$status" != "0" ]; then
+    echo '<ERROR> Docker is not available (docker socket did not respond).'
+    echo '<ERROR> This plugin needs a running Docker Engine reachable as user loxberry.'
+    echo '<ERROR> Install the LoxBerry Docker plugin (https://wiki.loxberry.de) or Docker'
+    echo '<ERROR> natively, and make sure user loxberry may use /var/run/docker.sock'
+    echo '<ERROR> (e.g. add loxberry to the docker group). Aborting installation.'
     exit 2
 fi
+echo "<OK> Docker is available"
 
 # 64-bit is required: the UniFi Network Application and MongoDB are only published
 # as 64-bit images (amd64 / arm64). There are no arm32 images, so a 32-bit host
