@@ -18,11 +18,22 @@ statusfragment:
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
   action: "statusFragment"
 
+diagnostics:
+  route: "/diagnostics"
+  controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
+  action: "diagnosticsPage"
+
 upgrade:
   route: "/upgrade"
   controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
   method: 'POST'
   action: "upgrade"
+
+reset:
+  route: "/reset"
+  controller: 'LoxBerryUnifiPlugin\Controller\HomeController'
+  method: 'POST'
+  action: "reset"
 
 unifi:
   route: "/unifi"

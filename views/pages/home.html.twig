@@ -90,6 +90,21 @@
 		</div>
 	</form>
 
+	<div class="wide">{{ trans('home.reset_title') }}</div>
+	<p>
+		<i>{{ trans('home.reset_desc') }}</i>
+	</p>
+	<form id="reset" method="post" action="{{ adminRouteUrl('reset') }}" onsubmit="return confirm('{{ trans('home.reset_confirm') }}');">
+		<div class="lb_flex-container">
+			<div class="lb_flex-item">
+				<button type="submit" name="btnreset" id="btnreset" data-role="button" data-inline="true" data-mini="true" data-icon="delete" class="ui-btn ui-icon-delete ui-btn-icon-left ui-btn-inline ui-shadow ui-corner-all ui-mini">{{ trans('home.reset_button') }}</button>
+			</div>
+			<div class="lb_flex-item-help hint">
+				{{ trans('home.reset_hint') }}
+			</div>
+		</div>
+	</form>
+
 	<div class="wide">{{ trans('home.container_logs') }}</div>
 	<p>
 		<i>{{ trans('home.container_logs_desc') }}</i>
@@ -99,6 +114,7 @@
 			<input type="checkbox" id="home_autorefresh" data-role="none" checked> {{ trans('home.autorefresh') }}
 		</label>
 		<a href="{{ adminRouteUrl('containerlogs') }}" data-role="button" data-inline="true" data-mini="true" data-icon="action" style="margin-left:12px;">{{ trans('home.open_logs_fullpage') }}</a>
+		<a href="{{ adminRouteUrl('diagnostics') }}" data-role="button" data-inline="true" data-mini="true" data-icon="search" style="margin-left:12px;">{{ trans('home.open_diagnostics') }}</a>
 	</div>
 
 	<p style="margin:0 0 4px;"><b>{{ trans('home.serverlog_title') }}</b></p>

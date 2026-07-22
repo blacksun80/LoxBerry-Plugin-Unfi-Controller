@@ -10,6 +10,9 @@ class SystemService
     /** Name of the docker container (see container_name in docker-compose.yml) */
     const CONTAINER_NAME = "unifi-network-application";
 
+    /** Name of the MongoDB container (see container_name in docker-compose.yml) */
+    const MONGO_CONTAINER_NAME = "unifi-db";
+
     /** Name of the systemd service that runs docker compose for the container */
     const SERVICE_NAME = "unifi";
 
@@ -39,6 +42,17 @@ class SystemService
     public function restartService($serviceName)
     {
         return shell_exec("sudo systemctl restart $serviceName &");
+    }
+
+    /**
+     * Force-removes both containers (app + database) without touching their data
+     * volumes. Use when they are stuck (e.g. "Created" but never started, or
+     * referencing a network that no longer exists) - the next service start then
+     * lets docker compose recreate everything cleanly.
+     */
+    public function resetContainers()
+    {
+        shell_exec("docker rm -f " . self::CONTAINER_NAME . " " . self::MONGO_CONTAINER_NAME . " 2>&1");
     }
 
     /**
@@ -117,6 +131,70 @@ class SystemService
             array_unshift($out, "VERSION=$version");
         }
         file_put_contents($filename, implode("\n", $out) . "\n");
+    }
+
+    /**
+     * Collects everything relevant for troubleshooting a failed/stuck service into
+     * one text block: the systemd status (with the actual failure reason - e.g.
+     * "address already in use" or "network ... not found" - which the container
+     * logs alone do NOT show when a container exists but never started), the
+     * current state of both containers, free disk space, both containers' own
+     * logs, and the UniFi server.log. Meant to be copy-pasted when asking for help.
+     */
+    public function getDiagnostics(): string
+    {
+        $sections = array();
+        $sections[] = "=== systemctl status " . self::SERVICE_NAME . " ===\n"
+            . $this->getServiceStatusDetails(self::SERVICE_NAME, 40);
+        $sections[] = "=== docker ps -a (unifi containers) ===\n"
+            . $this->getContainerStates();
+        $sections[] = "=== disk space ===\n"
+            . $this->getDiskFree();
+        $sections[] = "=== docker logs " . self::CONTAINER_NAME . " (app, last 150) ===\n"
+            . $this->getRawContainerLogs(self::CONTAINER_NAME, 150);
+        $sections[] = "=== docker logs " . self::MONGO_CONTAINER_NAME . " (database, last 150) ===\n"
+            . $this->getRawContainerLogs(self::MONGO_CONTAINER_NAME, 150);
+        $sections[] = "=== UniFi server.log (last 150) ===\n"
+            . $this->tailFile("REPLACELBPLOGDIR/server.log", 150);
+        return implode("\n\n", $sections);
+    }
+
+    /**
+     * The full human-readable systemd status (includes the tail of the unit's
+     * journal, which is where the actual failure reason from docker/compose ends
+     * up, e.g. port conflicts or stale network references).
+     */
+    private function getServiceStatusDetails($serviceName, $lines = 40): string
+    {
+        $output = shell_exec("systemctl status " . escapeshellarg($serviceName) . " --no-pager -l 2>&1");
+        if ($output === null) {
+            return "";
+        }
+        $allLines = explode("\n", rtrim($output, "\n"));
+        return implode("\n", array_slice($allLines, -$lines));
+    }
+
+    /**
+     * Shows whether our containers are Up, stuck in Created, Exited (with which
+     * code), or missing entirely - the fastest way to see something is stuck.
+     */
+    private function getContainerStates(): string
+    {
+        $output = shell_exec("docker ps -a --filter name=unifi-network-application --filter name=unifi-db 2>&1");
+        return $output === null ? "" : $output;
+    }
+
+    private function getDiskFree(): string
+    {
+        $output = shell_exec("df -h / 2>&1");
+        return $output === null ? "" : $output;
+    }
+
+    private function getRawContainerLogs($containerName, $lines): string
+    {
+        $lines = (int) $lines;
+        $output = shell_exec("docker logs --tail $lines --timestamps " . escapeshellarg($containerName) . " 2>&1");
+        return $output === null ? "" : $output;
     }
 
     /**

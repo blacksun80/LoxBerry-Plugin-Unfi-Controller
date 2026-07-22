@@ -88,6 +88,19 @@ class HomeController extends AbstractController
         return $this->redirect($this->urlBuilder->getAdminUrl('home'));
     }
 
+    /**
+     * Force-removes both containers (data volumes are untouched) and restarts the
+     * service so docker compose recreates them cleanly. Use when the service is
+     * stuck (e.g. "Created" but never started, or referencing a network that no
+     * longer exists).
+     */
+    public function reset(): Response
+    {
+        $this->sysService->resetContainers();
+        $this->sysService->restartService(self::SERVICE_NAME);
+        return $this->redirect($this->urlBuilder->getAdminUrl('home'));
+    }
+
     private function getContainerVersion(): string
     {
         return $this->sysService->getContainerVersionFromEnv();
@@ -143,5 +156,19 @@ class HomeController extends AbstractController
             $this->sysService->getServiceStatus(self::SERVICE_NAME)
         );
         return $this->render('pages/status.html.twig', array("unifi_data" => $unifi_data));
+    }
+
+    /**
+     * Aggregated diagnostics (systemd status, container states, disk space, both
+     * containers' logs, server.log) in one copy-paste-friendly page - for cases
+     * where the container logs alone do not explain why something failed to start.
+     *
+     * @return Response
+     */
+    public function diagnosticsPage(): Response
+    {
+        return $this->render('pages/diagnostics.html.twig', array(
+            "diagnostics" => $this->sysService->getDiagnostics()
+        ));
     }
 }

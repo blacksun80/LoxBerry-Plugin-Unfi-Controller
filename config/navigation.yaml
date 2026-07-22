@@ -10,3 +10,6 @@ logs:
 containerlogs:
   title: navbar.containerlogs
   route: containerlogs
+diagnostics:
+  title: navbar.diagnostics
+  route: diagnostics

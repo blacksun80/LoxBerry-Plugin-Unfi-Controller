@@ -1,0 +1,13 @@
+{% extends 'pages/templates/adminBasePage.html.twig' %}
+
+{% block body %}
+<h2>{{ trans('diagnostics.headline') }}</h2>
+<p><i>{{ trans('diagnostics.description') }}</i></p>
+
+<div style="margin-bottom:8px;">
+	<a href="{{ adminRouteUrl('home') }}" data-role="button" data-inline="true" data-mini="true" data-icon="back">{{ trans('diagnostics.back') }}</a>
+	<a href="{{ adminRouteUrl('diagnostics') }}" data-role="button" data-inline="true" data-mini="true" data-icon="refresh">{{ trans('diagnostics.refresh') }}</a>
+</div>
+
+<pre id="diagnosticsbox" style="height:70vh; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:10px; border:1px solid #ddd; font-size:12px; line-height:1.35; white-space:pre-wrap; word-break:break-all; border-radius:4px; margin:0;">{{ diagnostics }}</pre>
+{% endblock %}
